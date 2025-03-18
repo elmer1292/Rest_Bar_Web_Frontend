@@ -76,14 +76,11 @@ class EmployeeController {
     }
     
     public function edit($id) {
-        error_log("Attempting to edit employee with ID: " . $id);
-        
+
         $employee = $this->employee->getById($id);
-        error_log("Employee data received: " . print_r($employee, true));
-    
         if ($employee) {
             $data['employee'] = $employee;
-            require_once dirname(__DIR__) . '/views/employees/edit.php';
+            require_once dirname(__DIR__) . '/views/employees/edit';
         } else {
             $_SESSION['error'] = "Empleado no encontrado.";
             header('Location: /restbar/employees');
