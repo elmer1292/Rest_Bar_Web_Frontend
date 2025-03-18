@@ -12,7 +12,13 @@ class EmployeeController {
     }
 
     public function index() {
-        return $this->employee->getAll();
+        $employees = $this->employee->getAll();
+        $roles = $this->employee->getAllRoles();
+        
+        return [
+            'employees' => $employees,
+            'roles' => $roles
+        ];
     }
     
     public function store() {
@@ -67,5 +73,21 @@ class EmployeeController {
     
     public function show($id) {
         return $this->employee->getById($id);
+    }
+    
+    public function edit($id) {
+        error_log("Attempting to edit employee with ID: " . $id);
+        
+        $employee = $this->employee->getById($id);
+        error_log("Employee data received: " . print_r($employee, true));
+    
+        if ($employee) {
+            $data['employee'] = $employee;
+            require_once dirname(__DIR__) . '/views/employees/edit.php';
+        } else {
+            $_SESSION['error'] = "Empleado no encontrado.";
+            header('Location: /restbar/employees');
+            exit();
+        }
     }
 }

@@ -23,10 +23,13 @@ class Employee {
     public function getById($id) {
         try {
             $query = "CALL sp_GetEmployeeById(?)";
-            $stmt = $this->db->prepare($query);
+            $stmt = $this->conn->prepare($query);
             $stmt->execute([$id]);
-            return $stmt->fetch(PDO::FETCH_ASSOC);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            error_log("GetById result: " . print_r($result, true));
+            return $result;
         } catch (PDOException $e) {
+            error_log("Error in getById: " . $e->getMessage());
             $_SESSION['error'] = "Error al obtener empleado: " . $e->getMessage();
             return null;
         }
@@ -34,37 +37,28 @@ class Employee {
 
     public function create($data) {
         try {
-            // First create user
-            $queryUser = "CALL sp_CreateUser(?, ?, ?, @userId)";
-            $stmt = $this->conn->prepare($queryUser);
+            // Modified to not include salary
+            $query = "CALL sp_CreateUserWithEmployee(?, ?, ?, ?, ?, ?, CURDATE(), NULL)";
+            $stmt = $this->conn->prepare($query);
             
             $hashedPassword = password_hash($data['Contrasenia'], PASSWORD_DEFAULT);
+            $nombreCompleto = $data['Nombre'] . ' ' . $data['Apellido'];
             
-            $stmt->execute([
+            $params = [
                 $data['Nombre_Usuario'],
                 $hashedPassword,
-                $data['Cargo']
-            ]);
-            
-            // Get the user ID
-            $result = $this->conn->query("SELECT @userId as id")->fetch(PDO::FETCH_ASSOC);
-            $userId = $result['id'];
-            
-            // Then create employee
-            $queryEmp = "CALL sp_CreateEmployeeWithUser(?, ?, ?, ?, ?, ?)";
-            $stmt = $this->conn->prepare($queryEmp);
-            
-            return $stmt->execute([
-                $userId,
-                $data['Nombre'],
-                $data['Apellido'],
-                $data['Telefono'],
+                $data['Cargo'],
+                $nombreCompleto,
                 $data['Correo'],
-                $data['Salario'] ?? 0.00  // Added salary field
-            ]);
+                $data['Telefono'],
+                // Passing NULL for salary
+            ];
+            
+            $result = $stmt->execute($params);
+            return $result;
             
         } catch (PDOException $e) {
-            error_log("Error en create: " . $e->getMessage());
+            $_SESSION['error'] = "Error: " . $e->getMessage();
             return false;
         }
     }
@@ -96,6 +90,18 @@ class Employee {
         } catch (PDOException $e) {
             $_SESSION['error'] = "Error al eliminar empleado: " . $e->getMessage();
             return false;
+        }
+    }
+
+    public function getAllRoles() {
+        try {
+            $query = "CALL sp_GetAllRols()";
+            $stmt = $this->conn->prepare($query);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Error getting roles: " . $e->getMessage());
+            return [];
         }
     }
 }

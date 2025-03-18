@@ -36,7 +36,6 @@ $routes = [
     '/restbar/dashboard' => '/views/dashboard.php',
     '/restbar/employees' => '/views/employees/index.php',
     '/restbar/employees/create' => '/views/employees/create.php',
-    '/restbar/employees/edit' => '/views/employees/edit.php',
     '/restbar/employees/store' => [
         'POST' => function() {
             require_once BASE_PATH . '/controllers/EmployeeController.php';
@@ -69,7 +68,7 @@ $routes = [
 // Check if route exists
 $found = false;
 foreach ($routes as $url => $file) {
-    if ($request === $url) {
+    if (strpos($request, $url) === 0) {  // Match the base URL
         if (is_array($file)) {
             $method = $_SERVER['REQUEST_METHOD'];
             if (isset($file[$method])) {
@@ -91,6 +90,46 @@ foreach ($routes as $url => $file) {
             loadView($file);
             $found = true;
             break;
+        }
+    }
+    
+    // Add this before the 404 handling
+    // Check if the URL matches a pattern like /restbar/employees/edit/6
+    if (!$found && preg_match('#^/restbar/employees/edit/(\d+)$#', $request, $matches)) {
+        $id = $matches[1]; // Extract the ID from the URL
+        require_once BASE_PATH . '/controllers/EmployeeController.php';
+        $controller = new EmployeeController();
+        $employee = $controller->show($id);
+        
+        if ($employee) {
+            $data['employee'] = $employee;
+            $pageTitle = "Editar Empleado";
+            $backUrl = "/restbar/employees";
+            loadView('/views/employees/edit.php');
+        } else {
+            $_SESSION['error'] = "Empleado no encontrado.";
+            header('Location: /restbar/employees');
+            exit;
+        }
+        
+        $found = true;
+    }
+    
+    // Add this before the 404 handling
+    // Handle the update form submission
+    if (!$found && preg_match('#^/restbar/employees/update/(\d+)$#', $request, $matches)) {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $id = $matches[1];
+            require_once BASE_PATH . '/controllers/EmployeeController.php';
+            $controller = new EmployeeController();
+            if ($controller->update($id, $_POST)) {
+                $_SESSION['success'] = "Empleado actualizado exitosamente.";
+                header('Location: /restbar/employees');
+            } else {
+                $_SESSION['error'] = "Error al actualizar el empleado.";
+                header('Location: /restbar/employees/edit/' . $id);
+            }
+            exit;
         }
     }
 }
