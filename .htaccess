@@ -1,0 +1,17 @@
+Options -Indexes
+
+<FilesMatch "^\.">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+RewriteEngine On
+RewriteBase /restbar/
+
+# Protect directories
+RewriteRule ^(config|controllers|includes|models|views)/ - [F]
+
+# Allow only public directory
+RewriteCond %{REQUEST_URI} !^/restbar/public/
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^ public/index.php [L]
