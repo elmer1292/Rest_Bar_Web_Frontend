@@ -8,6 +8,7 @@ $pageTitle = "Editar Empleado";
 $backUrl = "/restbar/employees";
 require_once $headerPath;
 
+var_dump($data);
 // Get employee data
 $employee = $data['employee'];
 ?>
