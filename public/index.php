@@ -69,8 +69,38 @@ foreach ($routeKeys as $url) {
     $file = $routes[$url];
     error_log("Checking route: " . $url . " against request: " . $request);
     
-    if (strpos($request, $url) === 0) {
-        error_log("Route matched: " . $url);
+    // Para rutas con patrones como /restbar/employees/edit/(\d+)
+    if (strpos($url, '(\d+)') !== false) {
+        // Convertir la ruta con (\d+) a una expresión regular
+        $pattern = '#^' . str_replace('(\d+)', '(\d+)', $url) . '$#';
+        if (preg_match($pattern, $request, $matches)) {
+            error_log("Route matched with pattern: " . $url);
+            
+            if (strpos($url, '/restbar/employees/edit/') === 0) {
+                $id = $matches[1]; // Extract the ID from the URL
+                require_once BASE_PATH . '/controllers/EmployeeController.php';
+                $controller = new EmployeeController();
+                $employee = $controller->show($id);
+                
+                if ($employee) {
+                    $data['employee'] = $employee;
+                    $pageTitle = "Editar Empleado";
+                    $backUrl = "/restbar/employees";
+                    require_once BASE_PATH . $file; // Directly include the file
+                } else {
+                    $_SESSION['error'] = "Empleado no encontrado.";
+                    header('Location: /restbar/employees');
+                    exit;
+                }
+                
+                $found = true;
+                break;
+            }
+        }
+    }
+    // Para rutas simples sin patrones
+    else if ($url === $request) {  // Coincidencia exacta para rutas simples
+        error_log("Route matched exactly: " . $url);
         if (is_array($file)) {
             $method = $_SERVER['REQUEST_METHOD'];
             if (isset($file[$method])) {
@@ -94,45 +124,46 @@ foreach ($routeKeys as $url) {
             break;
         }
     }
+} // Esta es la llave de cierre correcta para el foreach
+
+// Eliminar o comentar el bloque de código duplicado para /restbar/employees/edit/(\d+)
+/*
+if (!$found && preg_match('#^/restbar/employees/edit/(\d+)$#', $request, $matches)) {
+    $id = $matches[1]; // Extract the ID from the URL
+    require_once BASE_PATH . '/controllers/EmployeeController.php';
+    $controller = new EmployeeController();
+    $employee = $controller->show($id);
     
-    // Add this before the 404 handling
-    // Check if the URL matches a pattern like /restbar/employees/edit/6
-    if (!$found && preg_match('#^/restbar/employees/edit/(\d+)$#', $request, $matches)) {
-        $id = $matches[1]; // Extract the ID from the URL
-        require_once BASE_PATH . '/controllers/EmployeeController.php';
-        $controller = new EmployeeController();
-        $employee = $controller->show($id);
-        
-        if ($employee) {
-            $data['employee'] = $employee;
-            $pageTitle = "Editar Empleado";
-            $backUrl = "/restbar/employees";
-            require_once BASE_PATH . '/views/employees/edit.php'; // Directly include the file
-        } else {
-            $_SESSION['error'] = "Empleado no encontrado.";
-            header('Location: /restbar/employees');
-            exit;
-        }
-        
-        $found = true;
+    if ($employee) {
+        $data['employee'] = $employee;
+        $pageTitle = "Editar Empleado";
+        $backUrl = "/restbar/employees";
+        require_once BASE_PATH . '/views/employees/edit.php'; // Directly include the file
+    } else {
+        $_SESSION['error'] = "Empleado no encontrado.";
+        header('Location: /restbar/employees');
+        exit;
     }
     
-    // Add this before the 404 handling
-    // Handle the update form submission
-    if (!$found && preg_match('#^/restbar/employees/update/(\d+)$#', $request, $matches)) {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $id = $matches[1];
-            require_once BASE_PATH . '/controllers/EmployeeController.php';
-            $controller = new EmployeeController();
-            if ($controller->update($id, $_POST)) {
-                $_SESSION['success'] = "Empleado actualizado exitosamente.";
-                header('Location: /restbar/employees');
-            } else {
-                $_SESSION['error'] = "Error al actualizar el empleado.";
-                header('Location: /restbar/employees/edit/' . $id);
-            }
-            exit;
+    $found = true;
+}
+*/
+
+// Add this before the 404 handling
+// Handle the update form submission
+if (!$found && preg_match('#^/restbar/employees/update/(\d+)$#', $request, $matches)) {
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $id = $matches[1];
+        require_once BASE_PATH . '/controllers/EmployeeController.php';
+        $controller = new EmployeeController();
+        if ($controller->update($id, $_POST)) {
+            $_SESSION['success'] = "Empleado actualizado exitosamente.";
+            header('Location: /restbar/employees');
+        } else {
+            $_SESSION['error'] = "Error al actualizar el empleado.";
+            header('Location: /restbar/employees/edit/' . $id);
         }
+        exit;
     }
 }
 
