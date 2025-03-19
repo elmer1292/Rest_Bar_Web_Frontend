@@ -1,7 +1,6 @@
 <?php
 $headerPath = dirname(__DIR__) . '/components/header.php';
 $footerPath = dirname(__DIR__) . '/components/footer.php';
-$headerHeadPath = dirname(__DIR__) . '/components/header_head.php';
 require_once dirname(dirname(__DIR__)) . '/controllers/EmployeeController.php';
 
 // Initialize controller and get employees
@@ -13,18 +12,24 @@ $roles = $result['roles'] ?? [];
 // Variables para el header
 $pageTitle = "Gestión de Empleados";
 $backUrl = "/restbar/dashboard";
-$createUrl = "/restbar/employees/create";
+$createUrl = "/restbar/employees/create"; // Establecer la URL para crear un nuevo empleado
 $createText = "Nuevo Empleado";
 
 require_once $headerPath;
-require_once $headerHeadPath; 
+
 ?>
 <div class="main-content">
     <div class="dashboard-header">
         <h2><?php echo $pageTitle; ?></h2>
-        
     </div>
- 
+    <header>
+                <?php if(isset($backUrl)): ?>
+                    <a href="<?php echo $backUrl; ?>" class="btn btn-secondary">Volver</a>
+                <?php endif; ?>
+                <?php if(isset($createUrl)): ?>
+                    <a href="<?php echo $createUrl; ?>" class="btn btn-primary"><?php echo $createText ?? 'Nuevo'; ?></a>
+                <?php endif; ?>
+    </header>
     <table class="data-table">
         <thead>
             <tr>

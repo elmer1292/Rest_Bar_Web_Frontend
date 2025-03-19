@@ -1,7 +1,6 @@
 <?php
 $headerPath = dirname(__DIR__) . '/components/header.php';
 $footerPath = dirname(__DIR__) . '/components/footer.php';
-$headerHeadPath = dirname(__DIR__) . '/components/header_head.php';
 
 // Variables para el header
 $pageTitle = "Crear Empleado";
@@ -13,7 +12,6 @@ require_once $headerPath;
     <div class="dashboard-header">
         <h2><?php echo $pageTitle; ?></h2>
     </div>
-    <?php require_once $headerHeadPath; ?>
 
     <div class="form-container">
         <form action="/restbar/employees/store" method="POST" class="form" onsubmit="return validateForm()">

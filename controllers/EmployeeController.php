@@ -38,14 +38,12 @@ class EmployeeController {
                     $_SESSION['success'] = "Empleado creado exitosamente";
                     header('Location: /restbar/employees');
                     exit;
-                } else {
-                    error_log("Error al crear empleado: " . print_r($data, true));
+                } else {                    
                     $_SESSION['error'] = "Error al crear el empleado";
                     header('Location: /restbar/employees/create');
                     exit;
                 }
             } catch (Exception $e) {
-                error_log("Exception al crear empleado: " . $e->getMessage());
                 $_SESSION['error'] = "Error al crear el empleado: " . $e->getMessage();
                 header('Location: /restbar/employees/create');
                 exit;
@@ -75,15 +73,6 @@ class EmployeeController {
         return $this->employee->getById($id);
     }
     
-    public function edit($id) {
-        $employee = $this->employee->getById($id);
-        if ($employee) {
-            return $employee;
-        } else {
-            $_SESSION['error'] = "Empleado no encontrado.";
-            return null;
-        }
-    }
     
     public function getById($id) {
         $employee = $this->employee->getById($id);
@@ -91,6 +80,6 @@ class EmployeeController {
             $_SESSION['error'] = "Empleado no encontrado.";
             return null;
         }
-        return $employee;
+        return ['employee' => $employee];
     }
 }

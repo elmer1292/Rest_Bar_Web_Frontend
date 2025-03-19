@@ -1,31 +1,35 @@
 <?php
 $headerPath = dirname(__DIR__) . '/components/header.php';
 $footerPath = dirname(__DIR__) . '/components/footer.php';
-$headerHeadPath = dirname(__DIR__) . '/components/header_head.php';
-require_once dirname(dirname(__DIR__)) . '/controllers/EmployeeController.php';
-
 // Extract the ID from the URL path
 $uri = $_SERVER['REQUEST_URI'];
 $parts = explode('/', $uri);
 $id = end($parts); // Get the last part of the URL which should be the ID
 
 $controller = new EmployeeController();
+// After getting the result from the controller
 $result = $controller->getById($id);
-$employee = $result ?? [];
+$employee = $result['employee'] ?? [];
+
+// Check if employee data was found
+if (empty($employee)) {
+    $_SESSION['error'] = "No se encontró información del empleado.";
+    header('Location: /restbar/employees');
+    exit;
+}
 
 // Variables para el header
 $pageTitle = "Editar Empleado";
 $backUrl = "/restbar/employees";
-require_once $headerPath;
 
+// Include the header to start a new page
+require_once $headerPath;
 ?>
 
 <div class="main-content">
     <div class="dashboard-header">
         <h2><?php echo $pageTitle; ?></h2>
     </div>
-    <?php require_once $headerHeadPath; ?>
-
     <div class="form-container">
         <form action="/restbar/employees/update/<?php echo $employee['ID_Usuario']; ?>" method="POST" class="form" onsubmit="return validateForm()">
             <?php
@@ -78,4 +82,7 @@ require_once $headerPath;
     </div>
 </div>
 
-<?php require_once $footerPath; ?>
+<?php 
+// Include the footer to properly close the page
+require_once $footerPath; 
+?>

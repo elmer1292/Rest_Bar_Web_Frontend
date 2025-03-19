@@ -6,20 +6,6 @@ require_once BASE_PATH . '/config/database.php';
 require_once BASE_PATH . '/includes/functions.php';
 require_once BASE_PATH . '/includes/auth.php';
 
-// Function to load view with header and footer
-function loadView($file) {
-    global $pageTitle, $backUrl, $createUrl, $createText, $isLoginPage;
-    
-    // Set default values if not set
-    $pageTitle = $pageTitle ?? 'RestBar';
-    $backUrl = $backUrl ?? null;
-    $createUrl = $createUrl ?? null;
-    $createText = $createText ?? null;
-    $isLoginPage = $isLoginPage ?? false;
-    
-    require_once BASE_PATH . $file;
-}
-
 // Basic routing
 $request = $_SERVER['REQUEST_URI'];
 $request = parse_url($request, PHP_URL_PATH);
@@ -36,6 +22,8 @@ $routes = [
     '/restbar/dashboard' => '/views/dashboard.php',
     '/restbar/employees' => '/views/employees/index.php',
     '/restbar/employees/create' => '/views/employees/create.php',
+    '/restbar/employees/edit/(\d+)' => '/views/employees/edit.php',
+    '/restbar/employees/update/(\d+)' => '/views/employees/update.php', // New route    
     '/restbar/employees/store' => [
         'POST' => function() {
             require_once BASE_PATH . '/controllers/EmployeeController.php';
@@ -48,13 +36,14 @@ $routes = [
     '/restbar/categories' => '/views/categories/index.php',
     '/restbar/sales' => '/views/sales/index.php',
     '/restbar/customers' => '/views/customers/index.php',
+    // En la sección de rutas, asegúrate de que la ruta de login incluya el archivo de vista
     '/restbar/login' => [
         'GET' => function() {
             if (isset($_SESSION['user_id'])) {
                 header('Location: /restbar/dashboard');
                 exit();
             }
-            loadView('/views/auth/login.php');
+            require_once BASE_PATH . '/views/auth/login.php'; // Añadir esta línea
         },
         'POST' => '/controllers/AuthController.php'
     ],
@@ -67,8 +56,21 @@ $routes = [
 
 // Check if route exists
 $found = false;
-foreach ($routes as $url => $file) {
-    if (strpos($request, $url) === 0) {  // Match the base URL
+error_log("Request URI: " . $_SERVER['REQUEST_URI']);
+
+// Sort routes by length (longest first) to ensure more specific routes are matched first
+$routeKeys = array_keys($routes);
+usort($routeKeys, function($a, $b) {
+    return strlen($b) - strlen($a); // Sort by length, longest first
+});
+
+// Y en la sección donde procesas las rutas, añade:
+foreach ($routeKeys as $url) {
+    $file = $routes[$url];
+    error_log("Checking route: " . $url . " against request: " . $request);
+    
+    if (strpos($request, $url) === 0) {
+        error_log("Route matched: " . $url);
         if (is_array($file)) {
             $method = $_SERVER['REQUEST_METHOD'];
             if (isset($file[$method])) {
@@ -77,7 +79,7 @@ foreach ($routes as $url => $file) {
                 } else if ($method === 'POST') {
                     require_once BASE_PATH . $file[$method];
                 } else {
-                    loadView($file[$method]);
+                    require_once BASE_PATH . $file[$method]; // Directly include the file
                 }
                 $found = true;
                 break;
@@ -87,7 +89,7 @@ foreach ($routes as $url => $file) {
             $found = true;
             break;
         } else {
-            loadView($file);
+            require_once BASE_PATH . $file; // Directly include the file
             $found = true;
             break;
         }
@@ -105,7 +107,7 @@ foreach ($routes as $url => $file) {
             $data['employee'] = $employee;
             $pageTitle = "Editar Empleado";
             $backUrl = "/restbar/employees";
-            loadView('/views/employees/edit.php');
+            require_once BASE_PATH . '/views/employees/edit.php'; // Directly include the file
         } else {
             $_SESSION['error'] = "Empleado no encontrado.";
             header('Location: /restbar/employees');
@@ -137,5 +139,5 @@ foreach ($routes as $url => $file) {
 // 404 handling
 if (!$found) {
     http_response_code(404);
-    loadView('/views/errors/404.php');
+    require_once BASE_PATH . '/views/errors/404.php'; // Directly include the file
 }

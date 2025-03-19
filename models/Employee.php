@@ -26,10 +26,8 @@ class Employee {
             $stmt = $this->conn->prepare($query);
             $stmt->execute([$id]);
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
-            error_log("GetById result: " . print_r($result, true));
             return $result;
         } catch (PDOException $e) {
-            error_log("Error in getById: " . $e->getMessage());
             $_SESSION['error'] = "Error al obtener empleado: " . $e->getMessage();
             return null;
         }
