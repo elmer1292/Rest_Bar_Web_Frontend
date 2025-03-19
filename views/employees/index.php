@@ -17,14 +17,14 @@ $createUrl = "/restbar/employees/create";
 $createText = "Nuevo Empleado";
 
 require_once $headerPath;
-
+require_once $headerHeadPath; 
 ?>
 <div class="main-content">
     <div class="dashboard-header">
         <h2><?php echo $pageTitle; ?></h2>
         
     </div>
-    <?php require_once $headerHeadPath; ?>
+ 
     <table class="data-table">
         <thead>
             <tr>
