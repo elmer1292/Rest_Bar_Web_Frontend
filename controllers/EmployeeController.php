@@ -76,15 +76,21 @@ class EmployeeController {
     }
     
     public function edit($id) {
-
         $employee = $this->employee->getById($id);
         if ($employee) {
-            $data['employee'] = $employee;
-            require_once dirname(__DIR__) . '/views/employees/edit';
+            return $employee;
         } else {
             $_SESSION['error'] = "Empleado no encontrado.";
-            header('Location: /restbar/employees');
-            exit();
+            return null;
         }
+    }
+    
+    public function getById($id) {
+        $employee = $this->employee->getById($id);
+        if (!$employee) {
+            $_SESSION['error'] = "Empleado no encontrado.";
+            return null;
+        }
+        return $employee;
     }
 }

@@ -2,15 +2,22 @@
 $headerPath = dirname(__DIR__) . '/components/header.php';
 $footerPath = dirname(__DIR__) . '/components/footer.php';
 $headerHeadPath = dirname(__DIR__) . '/components/header_head.php';
+require_once dirname(dirname(__DIR__)) . '/controllers/EmployeeController.php';
+
+// Extract the ID from the URL path
+$uri = $_SERVER['REQUEST_URI'];
+$parts = explode('/', $uri);
+$id = end($parts); // Get the last part of the URL which should be the ID
+
+$controller = new EmployeeController();
+$result = $controller->getById($id);
+$employee = $result ?? [];
 
 // Variables para el header
 $pageTitle = "Editar Empleado";
 $backUrl = "/restbar/employees";
 require_once $headerPath;
 
-var_dump($data);
-// Get employee data
-$employee = $data['employee'];
 ?>
 
 <div class="main-content">
