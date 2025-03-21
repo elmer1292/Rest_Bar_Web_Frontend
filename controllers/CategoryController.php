@@ -1,5 +1,5 @@
 <?php
-require_once dirname(_DIR_). '/models/Category.php';
+require_once dirname(__DIR__). '/models/Category.php';
 class CategoryController{
     function index(){
         $category = new Category();
