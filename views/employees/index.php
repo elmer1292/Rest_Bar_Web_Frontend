@@ -71,14 +71,14 @@ require_once $headerPath;
                         <td><?php echo $employee['Nombre_Usuario']; ?></td>
                         <td class="actions">
                             <a href="/restbar/employees/edit/<?php echo $employee['ID_Usuario']; ?>" class="btn btn-small">Editar</a>
-                            <form action="/restbar/employees/delete" method="POST" style="display: inline;">
+                            <!-- <form action="/restbar/employees/delete" method="POST" style="display: inline;">
                                 <input type="hidden" name="action" value="delete">
-                                <input type="hidden" name="id" value="<?php echo $employee['ID_Empleado']; ?>">
+                                <input type="hidden" name="id" value="<php echo $employee['ID_Empleado']; ?>">
                                 <button type="submit" class="btn btn-small btn-danger" 
                                         onclick="return confirm('¿Está seguro de eliminar este empleado?')">
                                     Eliminar
                                 </button>
-                            </form>
+                            </form> -->
                         </td>
                     </tr>
                 <?php endforeach; ?>
