@@ -34,9 +34,9 @@ require_once $headerPath;
             </div>
 
             <div class="form-group">
-                <label for="Cargo">Cargo</label>
+                <label for="Cargo">Rol</label>
                 <select id="Cargo" name="Cargo" required>
-                    <option value="">Seleccione un cargo</option>
+                    <option value="">Seleccione un Rol</option>
                     <option value="1" <?php echo ($employee['ID_Rol'] == 1) ? 'selected' : ''; ?>>Administrador</option>
                     <option value="2" <?php echo ($employee['ID_Rol'] == 2) ? 'selected' : ''; ?>>Mesero</option>
                     <option value="3" <?php echo ($employee['ID_Rol'] == 3) ? 'selected' : ''; ?>>Cajero</option>
