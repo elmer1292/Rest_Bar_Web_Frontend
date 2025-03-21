@@ -34,8 +34,7 @@ require_once $headerPath;
         <thead>
             <tr>
                 <th>ID</th>
-                <th>Nombre</th>
-                <th>Apellido</th>
+                <th>Nombre Completo</th>
                 <th>Cargo</th>
                 <th>Teléfono</th>
                 <th>Correo</th>
@@ -48,13 +47,7 @@ require_once $headerPath;
                 <?php foreach($employees as $employee): ?>
                     <tr>
                         <td><?php echo $employee['ID_Empleado']; ?></td>
-                        <td><?php 
-                            $nombreCompleto = explode(' ', $employee['Nombre_Completo']);
-                            echo $nombreCompleto[0]; // First name
-                        ?></td>
-                        <td><?php 
-                            echo isset($nombreCompleto[1]) ? $nombreCompleto[1] : ''; // Last name
-                        ?></td>
+                        <td><?php echo $employee['Nombre_Completo']; ?></td>
                         <td><?php 
                             // Replace hardcoded array with dynamic data
                             $roleName = 'Desconocido';

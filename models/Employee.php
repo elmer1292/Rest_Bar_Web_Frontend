@@ -73,7 +73,7 @@ class Employee {
             $empleadoId = $result['ID_Empleado'];
     
             // Now call the stored procedure with the correct ID_Empleado
-            $query = "CALL sp_UpdateEmployee(?, ?, ?, ?, ?, ?, ?, ?)";
+            $query = "CALL sp_UpdateEmployee(?, ?, ?, ?, ?, ?, ?)";
             $stmt = $this->conn->prepare($query);
 
             // Convert Cargo to integer
@@ -81,8 +81,7 @@ class Employee {
             
             return $stmt->execute([
                 $empleadoId,         // p_ID_Empleado
-                $data['Nombre'],     // p_Nombre
-                $data['Apellido'],   // p_Apellido
+                $data['Nombre_Completo'],     // p_Nombre
                 $data['Correo'],     // p_Correo
                 $data['Telefono'],   // p_Telefono
                 $id,                 // p_ID_Usuario

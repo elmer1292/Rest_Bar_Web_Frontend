@@ -28,21 +28,9 @@ require_once $headerPath;
     </div>
     <div class="form-container">
         <form action="/restbar/employees/update/<?php echo $employee['ID_Usuario']; ?>" method="POST" class="form" onsubmit="return validateForm()">
-            <?php
-            // Split the full name into first and last name
-            $nombreCompleto = explode(' ', $employee['Nombre_Completo'], 2);
-            $nombre = $nombreCompleto[0];
-            $apellido = isset($nombreCompleto[1]) ? $nombreCompleto[1] : '';
-            ?>
-            
             <div class="form-group">
-                <label for="Nombre">Nombre</label>
-                <input type="text" id="Nombre" name="Nombre" value="<?php echo htmlspecialchars($nombre); ?>" required pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]+" maxlength="50">
-            </div>
-
-            <div class="form-group">
-                <label for="Apellido">Apellido</label>
-                <input type="text" id="Apellido" name="Apellido" value="<?php echo htmlspecialchars($apellido); ?>" required pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]+" maxlength="50">
+                <label for="Nombre_Completo">Nombre Completo</label>
+                <input type="text" id="Nombre_Completo" name="Nombre_Completo" value="<?php echo htmlspecialchars($employee['Nombre_Completo']); ?>" required pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]+" maxlength="100">
             </div>
 
             <div class="form-group">
