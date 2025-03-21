@@ -15,7 +15,7 @@ class EmployeeController {
         $employees = $this->employee->getAll();
         $roles = $this->employee->getAllRoles();
         
-        return [
+        return [# views/employee/index.php
             'employees' => $employees,
             'roles' => $roles
         ];

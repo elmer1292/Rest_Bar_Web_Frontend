@@ -32,7 +32,7 @@ $userRole = $_SESSION['role'];
             
             <li><a href="./tables/index.php">Mesas</a></li>
             <li><a href="./products/index.php">Productos</a></li>
-            <li><a href="./categories/index.php">Categorías</a></li>
+            <li><a href="./categories">Categorías</a></li>
             <li><a href="./sales/index.php">Ventas</a></li>
             <li><a href="./customers/index.php">Clientes</a></li>
             

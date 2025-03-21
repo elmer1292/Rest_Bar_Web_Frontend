@@ -26,9 +26,9 @@ require_once $headerPath;
             </div>
 
             <div class="form-group">
-                <label for="Cargo">Cargo</label>
+                <label for="Cargo">Rol</label>
                 <select id="Cargo" name="Cargo" required>
-                    <option value="">Seleccione un cargo</option>
+                    <option value="">Seleccione un Rol</option>
                     <option value="1">Administrador</option>
                     <option value="2">Mesero</option>
                     <option value="3">Cajero</option>
