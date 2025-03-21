@@ -124,33 +124,7 @@ foreach ($routeKeys as $url) {
             break;
         }
     }
-} // Esta es la llave de cierre correcta para el foreach
-
-// Eliminar o comentar el bloque de código duplicado para /restbar/employees/edit/(\d+)
-/*
-if (!$found && preg_match('#^/restbar/employees/edit/(\d+)$#', $request, $matches)) {
-    $id = $matches[1]; // Extract the ID from the URL
-    require_once BASE_PATH . '/controllers/EmployeeController.php';
-    $controller = new EmployeeController();
-    $employee = $controller->show($id);
-    
-    if ($employee) {
-        $data['employee'] = $employee;
-        $pageTitle = "Editar Empleado";
-        $backUrl = "/restbar/employees";
-        require_once BASE_PATH . '/views/employees/edit.php'; // Directly include the file
-    } else {
-        $_SESSION['error'] = "Empleado no encontrado.";
-        header('Location: /restbar/employees');
-        exit;
-    }
-    
-    $found = true;
-}
-*/
-
-// Add this before the 404 handling
-// Handle the update form submission
+} 
 if (!$found && preg_match('#^/restbar/employees/update/(\d+)$#', $request, $matches)) {
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $id = $matches[1];

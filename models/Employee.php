@@ -63,16 +63,31 @@ class Employee {
 
     public function update($id, $data) {
         try {
-            $query = "CALL sp_UpdateEmployee(?, ?, ?, ?, ?, ?, ?)";
-            $stmt = $this->db->prepare($query);
+            // First, we need to get the ID_Empleado from the ID_Usuario
+            $query = "SELECT ID_Empleado FROM empleados WHERE ID_Usuario = ?";
+            $stmt = $this->conn->prepare($query);
+           
+            $stmt->execute([$id]);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+            $empleadoId = $result['ID_Empleado'];
+    
+            // Now call the stored procedure with the correct ID_Empleado
+            $query = "CALL sp_UpdateEmployee(?, ?, ?, ?, ?, ?, ?, ?)";
+            $stmt = $this->conn->prepare($query);
+
+            // Convert Cargo to integer
+            $cargo = (int) $data['Cargo'];
+            
             return $stmt->execute([
-                $id,
-                $data['Nombre'],
-                $data['Apellido'],
-                $data['Cargo'],
-                $data['Telefono'],
-                $data['Correo'],
-                $data['Nombre_Usuario']
+                $empleadoId,         // p_ID_Empleado
+                $data['Nombre'],     // p_Nombre
+                $data['Apellido'],   // p_Apellido
+                $data['Correo'],     // p_Correo
+                $data['Telefono'],   // p_Telefono
+                $id,                 // p_ID_Usuario
+                $data['Nombre_Usuario'], // p_Nombre_Usuario
+                $cargo,              // p_ID_Rol
             ]);
         } catch (PDOException $e) {
             $_SESSION['error'] = "Error al actualizar empleado: " . $e->getMessage();
@@ -83,7 +98,7 @@ class Employee {
     public function delete($id) {
         try {
             $query = "CALL sp_DeleteEmployee(?)";
-            $stmt = $this->db->prepare($query);
+            $stmt = $this->conn->prepare($query);  // Changed from $this->db to $this->conn
             return $stmt->execute([$id]);
         } catch (PDOException $e) {
             $_SESSION['error'] = "Error al eliminar empleado: " . $e->getMessage();

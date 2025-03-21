@@ -6,11 +6,6 @@ $uri = $_SERVER['REQUEST_URI'];
 $parts = explode('/', $uri);
 $id = end($parts); // Get the last part of the URL which should be the ID
 
-$controller = new EmployeeController();
-// After getting the result from the controller
-$result = $controller->getById($id);
-$employee = $result['employee'] ?? [];
-
 // Check if employee data was found
 if (empty($employee)) {
     $_SESSION['error'] = "No se encontró información del empleado.";
@@ -24,6 +19,7 @@ $backUrl = "/restbar/employees";
 
 // Include the header to start a new page
 require_once $headerPath;
+
 ?>
 
 <div class="main-content">
